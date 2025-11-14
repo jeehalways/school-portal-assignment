@@ -1,1 +1,35 @@
+<!doctype html>
+<html lang="sv">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Login — School Portal</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+  </head>
+  <body>
+    <main class="login-container">
+      <h1>School Portal Login</h1>
+      <form id="loginForm">
+        <label>
+          Email:<br />
+          <input id="email" type="email" required />
+        </label>
+        <label>
+          Password:<br />
+          <input id="password" type="password" required />
+        </label>
+        <div>
+          <label><input id="remember" type="checkbox" /> Remember Me</label>
+        </div>
+        <button type="submit" class="btn btn-dark">Login</button>
+        <a id="forgot" href="#" title="Forgot password?">Forgot password?</a>
+      </form>
 
+      <div class="admin-link">
+        <a href="./admin.html">Go to Admin</a>
+      </div>
+    </main>
+
+    <script type="module" src="./js/auth.js"></script>
+  </body>
+</html>

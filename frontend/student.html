@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="sv">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Student — Grades</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+  </head>
+  <body>
+    <header>
+      <div class="logo">Grades</div>
+      <div class="user">
+        <button id="userBtn">Student Name ▾</button>
+        <div id="userMenu" class="hidden">
+          <label>
+            Filter course:
+            <select id="courseFilter">
+              <option value="">All</option>
+            </select>
+          </label>
+          <button id="logoutBtn" class="btn btn-dark">Logout</button>
+        </div>
+      </div>
+    </header>
+
+    <nav>
+      <button class="year-btn" data-year="1">Year 1</button>
+      <button class="year-btn" data-year="2">Year 2</button>
+      <button class="year-btn" data-year="3">Year 3</button>
+      <button id="allBtn">All</button>
+    </nav>
+
+    <main class="container">
+      <table id="gradesTable">
+        <thead>
+          <tr>
+            <th>Course</th>
+            <th>Grade</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </main>
+
+    <script type="module" src="./js/student.js"></script>
+  </body>
+</html>
