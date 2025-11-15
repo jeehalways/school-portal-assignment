@@ -1,31 +1,41 @@
 <!doctype html>
-<html lang="sv">
+<html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Admin — Dashboard</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+
     <link rel="stylesheet" href="./css/styles.css" />
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"></script>
+
+    <!-- Firebase Config -->
+    <script type="module">
+      import { firebaseConfig } from "./js/firebaseConfig.js";
+      firebase.initializeApp(firebaseConfig);
+    </script>
   </head>
+
   <body>
     <header>
-      <div class="logo">Admin Dashboard</div>
+      <div class="logo">Admin Panel</div>
+
       <div class="user">
-        <button id="adminUserBtn">Admin Name ▾</button>
+        <button id="adminUserBtn">Admin ▾</button>
         <div id="adminMenu" class="hidden">
-          <button id="adminLogout" class="btn btn-dark">Logout</button>
+          <button id="adminLogout" class="btn-dark">Logout</button>
         </div>
       </div>
     </header>
 
     <main class="admin-main">
-      <button id="registerGradesBtn" class="btn btn-dark">
-        Register Grades
-      </button>
-      <button id="adminStudentsBtn" class="btn btn-dark">
-        Admin Student Accounts
-      </button>
+      <button id="registerGradesBtn" class="btn">Register Grades</button>
+      <button id="adminStudentsBtn" class="btn">Admin Student Accounts</button>
     </main>
 
+    <script type="module" src="./js/auth.js"></script>
     <script type="module" src="./js/admin.js"></script>
   </body>
 </html>

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin – Student Accounts</title>
+
+    <link rel="stylesheet" href="./css/styles.css" />
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"></script>
+
+    <!-- Firebase Config -->
+    <script type="module">
+      import { firebaseConfig } from "./js/firebaseConfig.js";
+      firebase.initializeApp(firebaseConfig);
+    </script>
+  </head>
+
+  <body>
+    <header>
+      <div class="logo">Student Accounts</div>
+
+      <div class="user">
+        <button id="adminUserBtn">Admin ▾</button>
+        <div id="adminMenu" class="hidden">
+          <button id="adminLogout" class="btn-dark">Logout</button>
+        </div>
+      </div>
+    </header>
+
+    <nav>
+      <button class="year-btn" data-year="1">Year 1</button>
+      <button class="year-btn" data-year="2">Year 2</button>
+      <button class="year-btn" data-year="3">Year 3</button>
+      <button id="allBtn">All</button>
+    </nav>
+
+    <main>
+      <table id="studentsList">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Year</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <div id="popup" class="popup"></div>
+    </main>
+
+    <script type="module" src="./js/api.js"></script>
+    <script type="module" src="./js/auth.js"></script>
+    <script type="module" src="./js/adminStudents.js"></script>
+  </body>
+</html>
