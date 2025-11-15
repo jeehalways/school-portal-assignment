@@ -25,10 +25,26 @@
       <div class="user">
         <button id="adminUserBtn">Admin ▾</button>
         <div id="adminMenu" class="hidden">
+          <!-- ADDED: Course filter -->
+          <label>
+            Filter by course:
+            <select id="courseFilter">
+              <option value="">All</option>
+            </select>
+          </label>
+
           <button id="adminLogout" class="btn-dark">Logout</button>
         </div>
       </div>
     </header>
+
+    <!-- Year Filter Navigation -->
+    <nav>
+      <button class="year-btn" data-year="1">Year 1</button>
+      <button class="year-btn" data-year="2">Year 2</button>
+      <button class="year-btn" data-year="3">Year 3</button>
+      <button id="allBtn">All</button>
+    </nav>
 
     <main>
       <h2>Add a grade</h2>
