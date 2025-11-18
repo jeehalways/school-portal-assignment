@@ -11,8 +11,9 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 
-    <script type="module">
-      import { firebaseConfig } from "./js/firebaseConfig.js";
+    <!-- Firebase Config -->
+    <script src="./js/firebaseConfig.js"></script>
+    <script>
       firebase.initializeApp(firebaseConfig);
     </script>
   </head>
@@ -23,14 +24,11 @@
 
       <form id="adminLoginForm">
         <label>Email<br /><input type="email" id="email" required /></label>
-        <label
-          >Password<br /><input type="password" id="password" required
-        /></label>
+        <label>Password<br /><input type="password" id="password" required /></label>
 
         <label><input type="checkbox" id="remember" /> Remember me</label>
 
         <button type="submit" class="btn">Login as Admin</button>
-
         <a href="index.html">← Back to student login</a>
       </form>
     </main>

@@ -1,58 +1,98 @@
 import { apiRequest } from "./api.js";
 import { logout } from "./auth.js";
 
-// LOGOUT BUTTON
-document.getElementById("logoutBtn").addEventListener("click", logout);
+document.addEventListener("DOMContentLoaded", async () => {
+  let allCourses = [];
 
-// Load data immediately
-let allCourses = [];
+  // Load Student Name
+  try {
+    const profile = await apiRequest("/api/students/me");
 
-async function loadCourses() {
+    // Set the button text to the user's name
+    const userBtn = document.getElementById("userBtn");
+    userBtn.textContent = profile.name;
+
+    // Clicking the name logs out
+    userBtn.addEventListener("click", logout);
+  } catch (err) {
+    console.error("Could not load student name:", err);
+  }
+
+  // Load Courses
   try {
     const data = await apiRequest("/api/students/me/courses");
-    allCourses = data.courses; // expected: { name, year, grade }
-    renderCourses(allCourses);
+    allCourses = data.courses;
+
+    populateCourseDropdown(allCourses);
+    renderTable(allCourses);
   } catch (err) {
     console.error(err);
     alert("Could not load courses.");
   }
-}
 
-loadCourses();
+  // Populate Course Dropdown
+  function populateCourseDropdown(courses) {
+    const dropdown = document.getElementById("courseFilter");
 
-// FILTER LOGIC
-document.querySelectorAll(".filter").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    const year = btn.dataset.year;
+    // Clear old options except "All"
+    dropdown.innerHTML = `<option value="">All</option>`;
 
-    if (year === "all") {
-      renderCourses(allCourses);
+    // Get unique courses
+    const uniqueNames = [...new Set(courses.map((c) => c.name))];
+
+    // Add each course
+    uniqueNames.forEach((name) => {
+      const opt = document.createElement("option");
+      opt.value = name;
+      opt.textContent = name;
+      dropdown.appendChild(opt);
+    });
+  }
+
+  // Render Tables
+  function renderTable(courses) {
+    const tbody = document.querySelector("#gradesTable tbody");
+    tbody.innerHTML = "";
+
+    if (!courses.length) {
+      tbody.innerHTML = `<tr><td colspan="2">No courses found.</td></tr>`;
       return;
     }
 
-    const filtered = allCourses.filter((c) => String(c.year) === year);
-    renderCourses(filtered);
-  });
-});
-
-// RENDER FUNCTION
-function renderCourses(courses) {
-  const container = document.getElementById("results");
-  container.innerHTML = "";
-
-  if (!courses.length) {
-    container.innerHTML = "<p>No courses found.</p>";
-    return;
+    courses.forEach((course) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${course.name}</td>
+        <td>${course.grade ?? "-"}</td>
+      `;
+      tbody.appendChild(tr);
+    });
   }
 
-  courses.forEach((course) => {
-    const div = document.createElement("div");
-    div.className = "course-card";
-    div.innerHTML = `
-      <h3>${course.name}</h3>
-      <p><strong>Year:</strong> ${course.year}</p>
-      <p><strong>Grade:</strong> ${course.grade ?? "-"}</p>
-    `;
-    container.appendChild(div);
+  // Year Filter
+  document.querySelectorAll(".year-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const year = btn.dataset.year;
+      const filtered = allCourses.filter((c) => String(c.year) === year);
+      renderTable(filtered);
+    });
   });
-}
+
+  // ALL button
+  document.getElementById("allBtn").addEventListener("click", () => {
+    renderTable(allCourses);
+  });
+
+  // Course Dropdown Filter
+  document.getElementById("courseFilter").addEventListener("change", (e) => {
+    const selected = e.target.value;
+
+    if (!selected) {
+      renderTable(allCourses);
+      return;
+    }
+
+    const filtered = allCourses.filter((c) => c.name === selected);
+    renderTable(filtered);
+  });
+});

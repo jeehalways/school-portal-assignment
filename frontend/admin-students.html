@@ -12,8 +12,8 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 
     <!-- Firebase Config -->
-    <script type="module">
-      import { firebaseConfig } from "./js/firebaseConfig.js";
+    <script src="./js/firebaseConfig.js"></script>
+    <script>
       firebase.initializeApp(firebaseConfig);
     </script>
   </head>
@@ -23,10 +23,7 @@
       <div class="logo">Student Accounts</div>
 
       <div class="user">
-        <button id="adminUserBtn">Admin ▾</button>
-        <div id="adminMenu" class="hidden">
-          <button id="logoutBtn" class="btn-dark">Logout</button>
-        </div>
+        <button id="adminUserBtn" class="btn-dark"></button>
       </div>
     </header>
 

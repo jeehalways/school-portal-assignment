@@ -12,8 +12,8 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 
     <!-- Firebase Config -->
-    <script type="module">
-      import { firebaseConfig } from "./js/firebaseConfig.js";
+    <script src="./js/firebaseConfig.js"></script>
+    <script>
       firebase.initializeApp(firebaseConfig);
     </script>
   </head>
@@ -23,22 +23,19 @@
       <div class="logo">Register Grades</div>
 
       <div class="user">
-        <button id="adminUserBtn">Admin ▾</button>
-        <div id="adminMenu" class="hidden">
-          <!-- ADDED: Course filter -->
+        <button id="adminUserBtn" class="btn-dark"></button>
+
+        <div class="course-filter-box">
           <label>
             Filter by course:
             <select id="courseFilter">
               <option value="">All</option>
             </select>
           </label>
-
-          <button id="adminLogout" class="btn-dark">Logout</button>
         </div>
       </div>
     </header>
 
-    <!-- Year Filter Navigation -->
     <nav>
       <button class="year-btn" data-year="1">Year 1</button>
       <button class="year-btn" data-year="2">Year 2</button>
@@ -68,6 +65,7 @@
       <button id="addGradeBtn" class="btn-dark">Add Grade</button>
 
       <h2>Grades Log</h2>
+
       <table id="gradesLogTable">
         <thead>
           <tr>
@@ -83,6 +81,6 @@
 
     <script type="module" src="./js/api.js"></script>
     <script type="module" src="./js/auth.js"></script>
-    <script type="module" src="./js/adminGrades.js"></script>
+    <script type="module" src="./js/admin-grades.js"></script>
   </body>
 </html>

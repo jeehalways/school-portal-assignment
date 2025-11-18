@@ -3,10 +3,10 @@
 // (Only admin can modify students)
 import { Router } from "express";
 import { authenticate } from "../middleware/auth";
-import { getMe } from "../controllers/studentController";
+import { getMe, getMyCourses } from "../controllers/studentController";
 
 const router = Router();
 
 router.get("/me", authenticate, getMe);
-
+router.get("/me/courses", authenticate, getMyCourses);
 export default router;

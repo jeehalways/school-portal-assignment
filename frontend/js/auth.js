@@ -58,3 +58,8 @@ export function logout() {
   firebase.auth().signOut();
   window.location.href = "index.html";
 }
+
+// logout button handler
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("logoutBtn")?.addEventListener("click", logout);
+});

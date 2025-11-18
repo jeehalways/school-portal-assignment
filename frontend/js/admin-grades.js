@@ -1,26 +1,27 @@
 import { apiRequest } from "./api.js";
 import { logout } from "./auth.js";
 
-/* ADMIN MENU LOGIC */
+// Admin Name + Logout Button
 
-const adminUserBtn = document.getElementById("adminUserBtn");
-const adminMenu = document.getElementById("adminMenu");
+async function loadAdminName() {
+  try {
+    const profile = await apiRequest("/api/students/me");
+    document.getElementById("adminUserBtn").textContent = profile.name;
 
-// Toggle dropdown
-adminUserBtn.addEventListener("click", () => {
-  adminMenu.classList.toggle("show");
-});
+    document.getElementById("adminUserBtn").addEventListener("click", logout);
+  } catch (err) {
+    console.error("Could not load admin name:", err);
+  }
+}
+loadAdminName();
 
-// Logout
-document.getElementById("adminLogout").addEventListener("click", logout);
-
-/* GLOBAL DATA */
+// Global Data
 
 let allStudents = [];
 let allCourses = [];
 let allGrades = [];
 
-/*  INITIAL LOAD */
+// Inicial Load
 
 async function init() {
   try {
@@ -48,7 +49,7 @@ async function init() {
 
 init();
 
-/* POPULATE SELECT FIELDS */
+// POPULATE SELECT FIELDS
 
 // Fill student dropdown
 function fillStudentSelect() {
@@ -101,7 +102,7 @@ function fillCourseFilterDropdown() {
   });
 }
 
-/* ADD GRADE BUTTON LOGIC */
+// Grade Button Logic
 
 document.getElementById("addGradeBtn").addEventListener("click", async () => {
   const studentId = document.getElementById("studentSelect").value;
@@ -133,7 +134,7 @@ document.getElementById("addGradeBtn").addEventListener("click", async () => {
   }
 });
 
-/* YEAR FILTER BUTTON LOGIC */
+// Year Filter Button Logic
 
 document.querySelectorAll(".year-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
@@ -147,7 +148,7 @@ document.getElementById("allBtn").addEventListener("click", () => {
   renderGradesTable(allGrades);
 });
 
-/* RENDER GRADES TABLE */
+// Render Grades Tables
 
 function renderGradesTable(list) {
   const tbody = document.querySelector("#gradesLogTable tbody");

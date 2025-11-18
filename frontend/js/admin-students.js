@@ -1,20 +1,24 @@
 import { apiRequest } from "./api.js";
 import { logout } from "./auth.js";
 
-/* ---------------------- MENU LOGIC ---------------------- */
-const adminBtn = document.getElementById("adminUserBtn");
-const adminMenu = document.getElementById("adminMenu");
+// Load admin name + set logout behavior
+async function loadAdminName() {
+  try {
+    const admin = await apiRequest("/api/students/me");
+    document.getElementById("adminUserBtn").textContent = admin.name;
 
-adminBtn.addEventListener("click", () => {
-  adminMenu.classList.toggle("show");
-});
+    // Clicking admin button logs out
+    document.getElementById("adminUserBtn").addEventListener("click", logout);
+  } catch (err) {
+    console.error("Could not load admin name:", err);
+  }
+}
+loadAdminName();
 
-document.getElementById("logoutBtn").addEventListener("click", logout);
-
-/* ---------------------- DATA ---------------------- */
+// Date 
 let allStudents = [];
 
-/* ---------------------- LOAD STUDENTS ---------------------- */
+//Load Students 
 async function loadStudents() {
   try {
     const data = await apiRequest("/api/admin/students");
@@ -28,7 +32,7 @@ async function loadStudents() {
 
 loadStudents();
 
-/* ---------------------- YEAR FILTER ---------------------- */
+//Yerar Filter
 document.querySelectorAll(".year-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
     const year = Number(btn.dataset.year);
@@ -41,7 +45,7 @@ document.getElementById("allBtn").addEventListener("click", () => {
   renderStudents(allStudents);
 });
 
-/* ---------------------- RENDER STUDENT TABLE ---------------------- */
+// Render Student Table 
 function renderStudents(list) {
   const tbody = document.querySelector("#studentsTable tbody");
   tbody.innerHTML = "";
@@ -61,7 +65,7 @@ function renderStudents(list) {
       <td>${student.year}</td>
     `;
 
-    /* Hover popup */
+    // Hover popup 
     tr.addEventListener("mouseenter", (e) => showPopup(e, student));
     tr.addEventListener("mouseleave", hidePopup);
 
@@ -69,7 +73,7 @@ function renderStudents(list) {
   });
 }
 
-/* ---------------------- POPUP LOGIC ---------------------- */
+//Popup Logic
 const popup = document.getElementById("popup");
 
 function showPopup(event, student) {
@@ -92,7 +96,7 @@ function hidePopup() {
   popup.style.display = "none";
 }
 
-/* ---------------------- EDIT & DELETE ACTIONS ---------------------- */
+// Edith and Delete Actions 
 function editStudent(id) {
   window.location.href = `edit-student.html?id=${id}`;
 }

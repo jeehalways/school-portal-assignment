@@ -12,8 +12,8 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 
     <!-- Firebase Config -->
-    <script type="module">
-      import { firebaseConfig } from "./js/firebaseConfig.js";
+    <script src="./js/firebaseConfig.js"></script>
+    <script>
       firebase.initializeApp(firebaseConfig);
     </script>
   </head>
@@ -23,17 +23,14 @@
       <div class="logo">Grades</div>
 
       <div class="user">
-        <button id="userBtn">User ▾</button>
-        <div id="userMenu" class="hidden">
-          <label>
-            Filter by course:
-            <select id="courseFilter">
-              <option value="">All</option>
-            </select>
-          </label>
+        <button id="userBtn" class="btn-dark"></button>
 
-          <button id="logoutBtn" class="btn-dark">Logout</button>
-        </div>
+        <label class="filter-label">
+          Filter by course:
+          <select id="courseFilter">
+            <option value="">All</option>
+          </select>
+        </label>
       </div>
     </header>
 
