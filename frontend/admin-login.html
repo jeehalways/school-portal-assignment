@@ -3,49 +3,39 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login – School Portal</title>
+    <title>Admin Login</title>
 
-    <!-- Styles -->
     <link rel="stylesheet" href="./css/styles.css" />
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 
-    <!-- Firebase Config -->
     <script type="module">
       import { firebaseConfig } from "./js/firebaseConfig.js";
       firebase.initializeApp(firebaseConfig);
     </script>
   </head>
+
   <body>
     <main class="login-container">
-      <h1>Student Portal</h1>
+      <h1>Admin Portal</h1>
 
-      <form id="loginForm">
+      <form id="adminLoginForm">
+        <label>Email<br /><input type="email" id="email" required /></label>
         <label
-          >Email<br />
-          <input type="email" id="email" required />
-        </label>
+          >Password<br /><input type="password" id="password" required
+        /></label>
 
-        <label
-          >Password<br />
-          <input type="password" id="password" required />
-        </label>
+        <label><input type="checkbox" id="remember" /> Remember me</label>
 
-        <label> <input type="checkbox" id="remember" /> Remember me </label>
+        <button type="submit" class="btn">Login as Admin</button>
 
-        <button type="submit" class="btn">Login</button>
-
-        <a href="#" id="forgot">Forgot password?</a>
-
-        <div class="admin-link">
-          <a href="admin-login.html">Admin</a>
-        </div>
+        <a href="index.html">← Back to student login</a>
       </form>
     </main>
 
     <script type="module" src="./js/api.js"></script>
-    <script type="module" src="./js/auth.js"></script>
+    <script type="module" src="./js/admin-auth.js"></script>
   </body>
 </html>
