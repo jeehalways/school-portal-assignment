@@ -37,7 +37,7 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 0;
+    padding: 15px 20px;
     border-bottom: 1px solid #000;
 }
 
@@ -200,9 +200,10 @@ nav {
 /* -------------------- TABLES -------------------- */
 table {
     width: 100%;
+    max-width: 900px;
+    margin: 20px auto;
     border-collapse: collapse;
-    margin-top: 20px;
-    display: block;
+    display:flexbox;
     overflow-x: auto;
 }
 
@@ -283,7 +284,7 @@ table tbody tr:hover {
     flex-wrap: wrap;
 }
 
-/* Course cards (alternative view if not using table) */
+/* Course cards */
 .course-card {
     border: 1px solid #000;
     padding: 12px;
@@ -306,4 +307,27 @@ table tbody tr:hover {
 .filter-label {
     font-size: 0.9rem;
     opacity: 0.9;
+}
+
+/* 1. WRAPPER FOR ALL ADMIN PAGES (adds left/right space) */
+.admin-page-wrapper {
+    padding: 0 20px;
+}
+
+/* 2. Center content area */
+.admin-content {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* 3. Add spacing to admin-grades form elements */
+.admin-form-block {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* 4. Center admin-students table */
+.center-table {
+    margin-left: auto;
+    margin-right: auto;
 }

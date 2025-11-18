@@ -18,7 +18,7 @@
     </script>
   </head>
 
-  <body>
+  <body class="admin-page-wrapper">
     <header>
       <div class="logo">Student Accounts</div>
 
@@ -27,39 +27,42 @@
       </div>
     </header>
 
-    <nav>
-      <button class="year-btn" data-year="1">Year 1</button>
-      <button class="year-btn" data-year="2">Year 2</button>
-      <button class="year-btn" data-year="3">Year 3</button>
-      <button id="allBtn">All</button>
-    </nav>
+    <div class="admin-content">
+      <nav>
+        <button class="year-btn" data-year="1">Year 1</button>
+        <button class="year-btn" data-year="2">Year 2</button>
+        <button class="year-btn" data-year="3">Year 3</button>
+        <button id="allBtn">All</button>
+      </nav>
 
-    <main>
-      <table id="studentsTable">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Year</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      <main>
+        <table id="studentsTable" class="center-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Year</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
 
-      <div id="popup" class="popup">
-        <h3>Student Info</h3>
-        <p id="popupName"></p>
-        <p id="popupEmail"></p>
-        <p id="popupPhone"></p>
-        <p id="popupAddress"></p>
+        <div id="popup" class="popup">
+          <h3>Student Info</h3>
+          <p id="popupName"></p>
+          <p id="popupEmail"></p>
+          <p id="popupPhone"></p>
+          <p id="popupAddress"></p>
 
-        <button id="editBtn" class="btn">Edit</button>
-        <button id="deleteBtn" class="btn-dark">Delete</button>
-      </div>
-    </main>
+          <button id="editBtn" class="btn">Edit</button>
+          <button id="deleteBtn" class="btn-dark">Delete</button>
+        </div>
+      </main>
+    </div>
 
     <script type="module" src="./js/api.js"></script>
     <script type="module" src="./js/auth.js"></script>
     <script type="module" src="./js/admin-students.js"></script>
   </body>
 </html>
+
