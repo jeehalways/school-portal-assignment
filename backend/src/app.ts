@@ -6,6 +6,8 @@ import cors from "cors";
 import healthRouter from "./routes/health";
 import studentRouter from "./routes/students";
 import adminRouter from "./routes/admin";
+import coursesRouter from "./routes/courses";
+import gradesRouter from "./routes/grades";
 
 const app = express();
 
@@ -16,5 +18,7 @@ app.use(express.json());
 app.use("/api/health", healthRouter);
 app.use("/api/students", studentRouter);
 app.use("/api/admin", adminRouter);
+app.use("/api/admin/courses", coursesRouter);
+app.use("/api/admin/grades", gradesRouter);
 
 export default app;
