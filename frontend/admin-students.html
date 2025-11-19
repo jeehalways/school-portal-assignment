@@ -48,18 +48,37 @@
         </table>
 
         <div id="popup" class="popup">
-          <h3>Student Info</h3>
-          <p id="popupName"></p>
-          <p id="popupEmail"></p>
-          <p id="popupPhone"></p>
-          <p id="popupAddress"></p>
+  <h3>Student Info</h3>
 
-          <button id="editBtn" class="btn">Edit</button>
-          <button id="deleteBtn" class="btn-dark">Delete</button>
-        </div>
-      </main>
-    </div>
+  <!-- READ MODE -->
+  <div id="viewMode">
+    <p><strong>Name:</strong> <span id="popupName"></span></p>
+    <p><strong>Email:</strong> <span id="popupEmail"></span></p>
+    <p><strong>Phone:</strong> <span id="popupPhone"></span></p>
+    <p><strong>Address:</strong> <span id="popupAddress"></span></p>
 
+    <button id="editBtn" class="btn">Edit</button>
+    <button id="deleteBtn" class="btn-dark">Delete</button>
+  </div>
+
+  <!-- EDIT MODE -->
+  <div id="editMode" class="hidden">
+    <label>Name:<input id="editName" type="text" /></label>
+    <label>Email:<input id="editEmail" type="email" /></label>
+    <label>Phone:<input id="editPhone" type="text" /></label>
+    <label>Address:<input id="editAddress" type="text" /></label>
+    <label>Year:
+      <select id="editYear">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+      </select>
+    </label>
+
+    <button id="saveBtn" class="btn-dark">Save</button>
+    <button id="cancelBtn" class="btn">Cancel</button>
+  </div>
+</div>
     <script type="module" src="./js/api.js"></script>
     <script type="module" src="./js/auth.js"></script>
     <script type="module" src="./js/admin-students.js"></script>
