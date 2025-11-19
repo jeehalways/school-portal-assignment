@@ -6,4 +6,8 @@ export const createGradeSchema = z.object({
   grade: z.string().min(1).max(1), // A-F
 });
 
+export const gradeIdParamSchema = z.object({
+  id: z.string().regex(/^\d+$/).transform(Number),
+});
+
 export type CreateGradeInput = z.infer<typeof createGradeSchema>;
