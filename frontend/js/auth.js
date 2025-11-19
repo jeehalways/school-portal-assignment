@@ -48,6 +48,7 @@ document.getElementById("forgot")?.addEventListener("click", async () => {
     alert("Password reset email sent.");
   } catch (err) {
     alert("Error sending reset link.");
+    console.log(err);
   }
 });
 
