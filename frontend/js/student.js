@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const userBtn = document.getElementById("userBtn");
     userBtn.textContent = profile.name;
 
-    // Clicking the name logs out
+    // Clicking name logs out
     userBtn.addEventListener("click", logout);
   } catch (err) {
     console.error("Could not load student name:", err);
@@ -49,13 +49,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // Render Tables
+  // Render Table (updated for grouping by base name)
   function renderTable(courses) {
     const tbody = document.querySelector("#gradesTable tbody");
     tbody.innerHTML = "";
 
     if (!courses.length) {
-      tbody.innerHTML = `<tr><td colspan="2">No courses found.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="3">No courses found.</td></tr>`;
       return;
     }
 
@@ -63,6 +63,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td>${course.name}</td>
+        <td>${course.year}</td>
         <td>${course.grade ?? "-"}</td>
       `;
       tbody.appendChild(tr);
@@ -92,7 +93,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    const filtered = allCourses.filter((c) => c.name === selected);
+    // Match base name ignoring year number
+    // Example: "Engleska" matches "Engleska 1", "Engleska 2", "Engleska 3"
+    const filtered = allCourses.filter((c) => {
+      const baseName = c.name.replace(/\d+/g, "").trim(); // remove numbers
+      return baseName === selected;
+    });
+
     renderTable(filtered);
   });
 });
