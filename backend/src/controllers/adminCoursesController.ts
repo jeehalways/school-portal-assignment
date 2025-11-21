@@ -1,6 +1,4 @@
-import { Router } from "express";
-import { authenticate } from "../middleware/auth";
-import { requireAdmin } from "../middleware/role";
+import { Request, Response } from "express";
 import db from "../config/db";
 import {
   createCourseSchema,
@@ -8,19 +6,17 @@ import {
   courseIdParamSchema,
 } from "../schemas/courseSchema";
 
-const router = Router();
-
 // GET ALL COURSES
-router.get("/", authenticate, requireAdmin, (_req, res) => {
+export const getCourses = (_req: Request, res: Response) => {
   const courses = db
     .prepare(`SELECT id, name, year FROM courses ORDER BY year, name`)
     .all();
 
   res.json({ courses });
-});
+};
 
-// GET ONE COURSE
-router.get("/:id", authenticate, requireAdmin, (req, res) => {
+// GET COURSE BY ID
+export const getCourseById = (req: Request, res: Response) => {
   const parsed = courseIdParamSchema.safeParse(req.params);
   if (!parsed.success)
     return res.status(400).json({ error: parsed.error.flatten() });
@@ -32,32 +28,24 @@ router.get("/:id", authenticate, requireAdmin, (req, res) => {
   if (!course) return res.status(404).json({ error: "Course not found" });
 
   res.json(course);
-});
+};
 
 // CREATE COURSE
-
-router.post("/", authenticate, requireAdmin, (req, res) => {
+export const createCourse = (req: Request, res: Response) => {
   const parsed = createCourseSchema.safeParse(req.body);
   if (!parsed.success)
     return res.status(400).json({ error: parsed.error.flatten() });
 
-  const c = parsed.data;
+  const { name, year } = parsed.data;
 
-  const stmt = db.prepare(`
-    INSERT INTO courses (name, year)
-    VALUES (?, ?)
-  `);
+  const stmt = db.prepare(`INSERT INTO courses (name, year) VALUES (?, ?)`);
+  const result = stmt.run(name, year);
 
-  const result = stmt.run(c.name, c.year);
-
-  res.status(201).json({
-    id: result.lastInsertRowid,
-    ...c,
-  });
-});
+  res.status(201).json({ id: result.lastInsertRowid, name, year });
+};
 
 // UPDATE COURSE
-router.put("/:id", authenticate, requireAdmin, (req, res) => {
+export const updateCourse = (req: Request, res: Response) => {
   const idParsed = courseIdParamSchema.safeParse(req.params);
   if (!idParsed.success)
     return res.status(400).json({ error: idParsed.error.flatten() });
@@ -66,26 +54,26 @@ router.put("/:id", authenticate, requireAdmin, (req, res) => {
   if (!bodyParsed.success)
     return res.status(400).json({ error: bodyParsed.error.flatten() });
 
-  const { id } = idParsed.data;
-  const data = bodyParsed.data;
+  const existing = db
+    .prepare(`SELECT * FROM courses WHERE id = ?`)
+    .get(idParsed.data.id);
 
-  const existing = db.prepare("SELECT * FROM courses WHERE id = ?").get(id);
   if (!existing) return res.status(404).json({ error: "Course not found" });
 
-  const stmt = db.prepare(`
+  db.prepare(
+    `
     UPDATE courses
     SET name = COALESCE(@name, name),
         year = COALESCE(@year, year)
     WHERE id = @id
-  `);
+  `
+  ).run({ ...bodyParsed.data, id: idParsed.data.id });
 
-  stmt.run({ ...data, id });
-
-  res.json({ id, ...data });
-});
+  res.json({ id: idParsed.data.id, ...bodyParsed.data });
+};
 
 // DELETE COURSE
-router.delete("/:id", authenticate, requireAdmin, (req, res) => {
+export const deleteCourse = (req: Request, res: Response) => {
   const parsed = courseIdParamSchema.safeParse(req.params);
   if (!parsed.success)
     return res.status(400).json({ error: parsed.error.flatten() });
@@ -93,6 +81,4 @@ router.delete("/:id", authenticate, requireAdmin, (req, res) => {
   db.prepare(`DELETE FROM courses WHERE id = ?`).run(parsed.data.id);
 
   res.json({ success: true });
-});
-
-export default router;
+};
