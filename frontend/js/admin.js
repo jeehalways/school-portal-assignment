@@ -4,7 +4,7 @@ import { logout } from "./auth.js";
 document.addEventListener("DOMContentLoaded", async () => {
   // Load admin name
   try {
-    const profile = await apiRequest("/api/students/me"); 
+    const profile = await apiRequest("/api/students/me");
     document.getElementById("adminUserBtn").textContent = profile.name;
   } catch (err) {
     console.error("Could not load admin profile:", err);
@@ -20,5 +20,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   document.getElementById("studentsBtn").addEventListener("click", () => {
     window.location.href = "admin-students.html";
+  });
+
+  document.getElementById("coursesBtn").addEventListener("click", () => {
+    window.location.href = "admin-courses.html";
   });
 });

@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Courses</title>
+
+    <link rel="stylesheet" href="./css/styles.css" />
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+
+    <!-- Firebase Config -->
+    <script src="./js/firebaseConfig.js"></script>
+    <script>
+      firebase.initializeApp(firebaseConfig);
+    </script>
+  </head>
+
+  <body class="admin-page-wrapper">
+    <header>
+      <div class="logo">Courses</div>
+
+      <div class="user">
+        <!-- Admin name button (click = logout) -->
+        <button id="adminUserBtn" class="btn-dark"></button>
+      </div>
+    </header>
+
+    <div class="admin-content">
+      <main>
+        <h2>Add a course</h2>
+
+        <div class="admin-form-block">
+          <label>
+            Course name:
+            <input type="text" id="courseName" />
+          </label>
+
+          <label>
+            Year:
+            <select id="courseYear">
+              <option value="">Select year</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+            </select>
+          </label>
+
+          <button id="addCourseBtn" class="btn-dark">Add course</button>
+        </div>
+
+        <h2>Existing courses</h2>
+
+        <table id="coursesTable" class="center-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Year</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </main>
+    </div>
+
+    <script type="module" src="./js/api.js"></script>
+    <script type="module" src="./js/auth.js"></script>
+    <script type="module" src="./js/admin-courses.js"></script>
+  </body>
+</html>
