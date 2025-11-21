@@ -60,12 +60,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     courses.forEach((course) => {
+      const grade = course.grade ?? "-";
+
       const tr = document.createElement("tr");
+
       tr.innerHTML = `
-        <td>${course.name}</td>
-        <td>${course.year}</td>
-        <td>${course.grade ?? "-"}</td>
-      `;
+      <td>${course.name}</td>
+      <td>${course.year}</td>
+      <td class="${grade === "F" ? "grade-fail" : ""}">
+        ${grade}
+      </td>
+    `;
+
       tbody.appendChild(tr);
     });
   }

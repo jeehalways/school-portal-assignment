@@ -345,3 +345,9 @@ table tbody tr:hover {
     color: #b00020;
     font-weight: 600;
 }
+
+/* Student page – failing grade = red text */
+.grade-fail {
+    color: #b00020;
+    font-weight: bold;
+}
