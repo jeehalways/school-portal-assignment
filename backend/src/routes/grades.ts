@@ -1,6 +1,3 @@
-// Grade CRUD + filtering
-// GET /grades
-
 import { Router } from "express";
 import { authenticate } from "../middleware/auth";
 import { requireAdmin } from "../middleware/role";
@@ -18,17 +15,17 @@ router.get("/", authenticate, requireAdmin, (_req, res) => {
   const grades = db
     .prepare(
       `
-   SELECT 
-  g.id,
-  u.name AS studentName,
-  c.name AS course,
-  c.year AS year,
-  g.grade,
-  g.created_at AS date
-FROM grades g
-JOIN users u ON u.id = g.student_id
-JOIN courses c ON c.id = g.course_id
-ORDER BY g.created_at DESC
+    SELECT 
+      g.id,
+      u.name AS studentName,
+      c.name AS course,
+      c.year AS year,
+      g.grade,
+      g.created_at AS date
+    FROM grades g
+    JOIN users u ON u.id = g.student_id
+    JOIN courses c ON c.id = g.course_id
+    ORDER BY g.created_at DESC
     `
     )
     .all();
@@ -46,13 +43,13 @@ router.post("/", authenticate, requireAdmin, (req, res) => {
 
   const { studentId, courseId, grade } = parsed.data;
 
-  // Ensure course exists
+  // Validate course
   const courseRow = db
     .prepare("SELECT id FROM courses WHERE id = ?")
     .get(courseId);
   if (!courseRow) return res.status(404).json({ error: "Course not found" });
 
-  // Ensure student exists
+  // Validate student
   const studentRow = db
     .prepare("SELECT id FROM users WHERE id = ?")
     .get(studentId);

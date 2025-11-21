@@ -65,17 +65,18 @@ function fillStudentSelect() {
 }
 
 function fillCourseSelect() {
-  courseSelect.innerHTML = "";
+  const select = document.getElementById("courseSelect");
+  select.innerHTML = "";
 
   allCourses.forEach((c) => {
     const opt = document.createElement("option");
-    opt.value = c.name;
+    opt.value = c.id;
     opt.textContent = c.name;
-    courseSelect.appendChild(opt);
+    select.appendChild(opt);
   });
 }
 
-/* ------------ COURSE FILTER (HEADER) ------------ */
+// COURSE FILTER (HEADER)
 
 function fillCourseFilterDropdown() {
   const filter = document.getElementById("courseFilter");
@@ -112,10 +113,12 @@ addGradeBtn.addEventListener("click", async () => {
   try {
     if (!currentEditingGradeId) {
       // CREATE
+      const courseId = Number(document.getElementById("courseSelect").value);
+
       const response = await apiRequest("/api/admin/grades", "POST", {
         studentId: Number(studentId),
-        course,
-        grade,
+        courseId: courseId,
+        grade: grade,
       });
 
       const student = allStudents.find(
