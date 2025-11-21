@@ -10,21 +10,21 @@ document.getElementById("loginForm")?.addEventListener("submit", async (e) => {
   const pass = document.getElementById("password").value;
   const remember = document.getElementById("remember").checked;
 
+  // Login with Firebase
   try {
-    // Login with Firebase
     const userCredential = await auth.signInWithEmailAndPassword(email, pass);
 
-    // Firebase returns a token (JWT)
-    const token = await userCredential.user.getIdToken(/* forceRefresh */ true);
+    // Get fresh token
+    const token = await userCredential.user.getIdToken(true);
 
-    // Store token
+    // Store Token
     if (remember) {
-      localStorage.setItem("idToken", token); // persistent
+      localStorage.setItem("idToken", token);
     } else {
-      sessionStorage.setItem("idToken", token); // clears after tab close
+      sessionStorage.setItem("idToken", token);
     }
 
-    // Ask backend what role the user has (admin/student)
+    // Ask backend for role
     const userInfo = await apiRequest("/api/students/me");
 
     if (userInfo.role === "admin") {
@@ -33,12 +33,23 @@ document.getElementById("loginForm")?.addEventListener("submit", async (e) => {
       window.location.href = "student.html";
     }
   } catch (err) {
-    alert("Login failed. Check your email and password.");
+    alert("Login failed. Check your credentials.");
     console.error(err);
   }
 });
 
+// AUTO TOKEN REFRESH
+firebase.auth().onAuthStateChanged(async (user) => {
+  if (!user) return;
+
+  // Refresh token every time auth changes
+  const token = await user.getIdToken(true);
+  localStorage.setItem("idToken", token);
+  sessionStorage.setItem("idToken", token);
+});
+
 // FORGOT PASSWORD
+
 document.getElementById("forgot")?.addEventListener("click", async () => {
   const email = prompt("Enter your email to reset password:");
   if (!email) return;
@@ -47,20 +58,20 @@ document.getElementById("forgot")?.addEventListener("click", async () => {
     await auth.sendPasswordResetEmail(email);
     alert("Password reset email sent.");
   } catch (err) {
-    alert("Error sending reset link.");
-    console.log(err);
+    alert("Could not send reset link.");
+    console.error(err);
   }
 });
 
-// LOGOUT function (used by other pages)
+// LOGOUT
 export function logout() {
   localStorage.removeItem("idToken");
   sessionStorage.removeItem("idToken");
-  firebase.auth().signOut();
+  auth.signOut();
   window.location.href = "index.html";
 }
 
-// logout button handler
+// Bind logout button if exists
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("logoutBtn")?.addEventListener("click", logout);
 });
