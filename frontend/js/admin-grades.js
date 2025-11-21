@@ -1,39 +1,35 @@
 import { apiRequest } from "./api.js";
 import { logout } from "./auth.js";
 
-// Admin Name + Logout Button
-
+// Load admin name + logout on click
 async function loadAdminName() {
   try {
     const profile = await apiRequest("/api/students/me");
     document.getElementById("adminUserBtn").textContent = profile.name;
-
     document.getElementById("adminUserBtn").addEventListener("click", logout);
   } catch (err) {
-    console.error("Could not load admin name:", err);
+    console.error("Could not load admin profile:", err);
   }
 }
 loadAdminName();
 
-// Global Data
-
+// Global data
 let allStudents = [];
 let allCourses = [];
 let allGrades = [];
 
-// Inicial Load
-
+// Initial load
 async function init() {
   try {
-    // GET all students
+    // Students
     const studentsRes = await apiRequest("/api/admin/students");
     allStudents = studentsRes.students;
 
-    // GET all courses
+    // Courses
     const coursesRes = await apiRequest("/api/admin/courses");
     allCourses = coursesRes.courses;
 
-    // GET grades log
+    // Grades log
     const gradesRes = await apiRequest("/api/admin/grades");
     allGrades = gradesRes.grades;
 
@@ -49,7 +45,7 @@ async function init() {
 
 init();
 
-// POPULATE SELECT FIELDS
+// POPULATE SELECTS
 
 // Fill student dropdown
 function fillStudentSelect() {
@@ -77,10 +73,9 @@ function fillCourseSelect() {
   });
 }
 
-// Fill course filter in admin menu
+// Course filter in header
 function fillCourseFilterDropdown() {
   const filter = document.getElementById("courseFilter");
-
   filter.innerHTML = `<option value="">All</option>`;
 
   allCourses.forEach((c) => {
@@ -102,8 +97,7 @@ function fillCourseFilterDropdown() {
   });
 }
 
-// Grade Button Logic
-
+// Add Grade Button 
 document.getElementById("addGradeBtn").addEventListener("click", async () => {
   const studentId = document.getElementById("studentSelect").value;
   const course = document.getElementById("courseSelect").value;
@@ -116,17 +110,25 @@ document.getElementById("addGradeBtn").addEventListener("click", async () => {
 
   try {
     const response = await apiRequest("/api/admin/grades", "POST", {
-      studentId,
+      studentId: Number(studentId),
       course,
       grade,
     });
 
     alert("Grade added successfully!");
 
-    // Add new grade to local list
-    allGrades.push(response.grade);
+    // Enrich new grade so it matches existing rows (has studentName + year)
+    const student = allStudents.find((s) => String(s.id) === String(studentId));
+    const courseObj = allCourses.find((c) => c.name === course);
 
-    // Refresh table
+    const enrichedGrade = {
+      ...response.grade,
+      studentName: student ? student.name : "(unknown)",
+      course,
+      year: courseObj ? courseObj.year : undefined,
+    };
+
+    allGrades.push(enrichedGrade);
     renderGradesTable(allGrades);
   } catch (err) {
     console.error(err);
@@ -134,8 +136,7 @@ document.getElementById("addGradeBtn").addEventListener("click", async () => {
   }
 });
 
-// Year Filter Button Logic
-
+// Year Filter Buttons 
 document.querySelectorAll(".year-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
     const year = Number(btn.dataset.year);
@@ -148,19 +149,48 @@ document.getElementById("allBtn").addEventListener("click", () => {
   renderGradesTable(allGrades);
 });
 
-// Render Grades Tables
+// Summary Helpers 
+function computeSummary(list) {
+  const summary = { A: 0, B: 0, C: 0, D: 0, E: 0, F: 0 };
+  list.forEach((g) => {
+    if (summary[g.grade] !== undefined) {
+      summary[g.grade] += 1;
+    }
+  });
+  return { total: list.length, summary };
+}
 
+function updateSummary(list) {
+  const el = document.getElementById("gradesSummary");
+  if (!el) return;
+
+  if (!list.length) {
+    el.textContent = "No grades to show.";
+    return;
+  }
+
+  const { total, summary } = computeSummary(list);
+  el.textContent = `Total: ${total} · A:${summary.A} B:${summary.B} C:${summary.C} D:${summary.D} E:${summary.E} F:${summary.F}`;
+}
+
+// Render Table 
 function renderGradesTable(list) {
   const tbody = document.querySelector("#gradesLogTable tbody");
   tbody.innerHTML = "";
 
   if (!list.length) {
     tbody.innerHTML = `<tr><td colspan="4">No grades found.</td></tr>`;
+    updateSummary(list);
     return;
   }
 
   list.forEach((g) => {
     const row = document.createElement("tr");
+
+    // Highlight failing grades
+    if (g.grade === "F") {
+      row.classList.add("grade-fail");
+    }
 
     row.innerHTML = `
       <td>${g.studentName}</td>
@@ -171,4 +201,6 @@ function renderGradesTable(list) {
 
     tbody.appendChild(row);
   });
+
+  updateSummary(list);
 }

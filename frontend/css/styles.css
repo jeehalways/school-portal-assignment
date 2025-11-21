@@ -203,7 +203,7 @@ table {
     max-width: 900px;
     margin: 20px auto;
     border-collapse: collapse;
-    display:flexbox;
+    display: flexbox;
     overflow-x: auto;
 }
 
@@ -330,4 +330,18 @@ table tbody tr:hover {
 .center-table {
     margin-left: auto;
     margin-right: auto;
+}
+
+/* Grades summary text under Grades Log */
+.grades-summary {
+    text-align: center;
+    margin-top: 8px;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+/* Highlight failing grades (F) */
+.grade-fail td {
+    color: #b00020;
+    font-weight: 600;
 }
