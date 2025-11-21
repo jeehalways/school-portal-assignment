@@ -45,24 +45,30 @@
       </nav>
 
       <main>
-        <h2>Add a grade</h2>
+        <h2>Add / Edit grade</h2>
 
         <div class="admin-form-block">
-          <label>Select student:</label>
-          <select id="studentSelect"></select>
+          <label>
+            Select student:
+            <select id="studentSelect"></select>
+          </label>
 
-          <label>Select course:</label>
-          <select id="courseSelect"></select>
+          <label>
+            Select course:
+            <select id="courseSelect"></select>
+          </label>
 
-          <label>Grade:</label>
-          <select id="gradeSelect">
-            <option value="A">A</option>
-            <option value="B">B</option>
-            <option value="C">C</option>
-            <option value="D">D</option>
-            <option value="E">E</option>
-            <option value="F">F</option>
-          </select>
+          <label>
+            Grade:
+            <select id="gradeSelect">
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+              <option value="D">D</option>
+              <option value="E">E</option>
+              <option value="F">F</option>
+            </select>
+          </label>
 
           <button id="addGradeBtn" class="btn-dark">Add Grade</button>
         </div>
@@ -77,6 +83,7 @@
               <th>Course</th>
               <th>Grade</th>
               <th>Date</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody></tbody>

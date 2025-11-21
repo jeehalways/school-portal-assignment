@@ -1,4 +1,3 @@
-// frontend/js/admin-courses.js
 import { apiRequest } from "./api.js";
 import { logout } from "./auth.js";
 

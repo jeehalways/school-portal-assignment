@@ -1,24 +1,32 @@
 import { apiRequest } from "./api.js";
 import { logout } from "./auth.js";
 
-// Load admin name + logout on click
+// ADMIN NAME + LOGOUT
 async function loadAdminName() {
   try {
     const profile = await apiRequest("/api/students/me");
-    document.getElementById("adminUserBtn").textContent = profile.name;
-    document.getElementById("adminUserBtn").addEventListener("click", logout);
+    const btn = document.getElementById("adminUserBtn");
+    btn.textContent = profile.name;
+    btn.addEventListener("click", logout);
   } catch (err) {
     console.error("Could not load admin profile:", err);
   }
 }
 loadAdminName();
 
-// Global data
+// GLOBAL STATE
 let allStudents = [];
 let allCourses = [];
 let allGrades = [];
+let currentEditingGradeId = null;
 
-// Initial load
+// DOM REFS (for the form)
+const studentSelect = document.getElementById("studentSelect");
+const courseSelect = document.getElementById("courseSelect");
+const gradeSelect = document.getElementById("gradeSelect");
+const addGradeBtn = document.getElementById("addGradeBtn");
+
+// INITIAL LOAD
 async function init() {
   try {
     // Students
@@ -42,38 +50,33 @@ async function init() {
     alert("Error loading admin data.");
   }
 }
-
 init();
 
-// POPULATE SELECTS
-
-// Fill student dropdown
+// SELECT DROPDOWNS (ADD/EDIT FORM)
 function fillStudentSelect() {
-  const select = document.getElementById("studentSelect");
-  select.innerHTML = "";
+  studentSelect.innerHTML = "";
 
   allStudents.forEach((s) => {
     const opt = document.createElement("option");
     opt.value = s.id;
     opt.textContent = `${s.name} (${s.email})`;
-    select.appendChild(opt);
+    studentSelect.appendChild(opt);
   });
 }
 
-// Fill course dropdown (for adding grades)
 function fillCourseSelect() {
-  const select = document.getElementById("courseSelect");
-  select.innerHTML = "";
+  courseSelect.innerHTML = "";
 
   allCourses.forEach((c) => {
     const opt = document.createElement("option");
     opt.value = c.name;
     opt.textContent = c.name;
-    select.appendChild(opt);
+    courseSelect.appendChild(opt);
   });
 }
 
-// Course filter in header
+/* ------------ COURSE FILTER (HEADER) ------------ */
+
 function fillCourseFilterDropdown() {
   const filter = document.getElementById("courseFilter");
   filter.innerHTML = `<option value="">All</option>`;
@@ -87,21 +90,19 @@ function fillCourseFilterDropdown() {
 
   filter.addEventListener("change", () => {
     const selected = filter.value;
-
-    if (!selected) {
-      renderGradesTable(allGrades);
-    } else {
-      const filtered = allGrades.filter((g) => g.course === selected);
-      renderGradesTable(filtered);
-    }
+    const list = selected
+      ? allGrades.filter((g) => g.course === selected)
+      : allGrades;
+    renderGradesTable(list);
   });
 }
 
-// Add Grade Button 
-document.getElementById("addGradeBtn").addEventListener("click", async () => {
-  const studentId = document.getElementById("studentSelect").value;
-  const course = document.getElementById("courseSelect").value;
-  const grade = document.getElementById("gradeSelect").value;
+// ADD / UPDATE GRADE (ONE BUTTON, TWO MODES)
+
+addGradeBtn.addEventListener("click", async () => {
+  const studentId = studentSelect.value;
+  const course = courseSelect.value;
+  const grade = gradeSelect.value;
 
   if (!studentId || !course || !grade) {
     alert("Please select a student, course, and grade.");
@@ -109,34 +110,52 @@ document.getElementById("addGradeBtn").addEventListener("click", async () => {
   }
 
   try {
-    const response = await apiRequest("/api/admin/grades", "POST", {
-      studentId: Number(studentId),
-      course,
-      grade,
-    });
+    if (!currentEditingGradeId) {
+      // CREATE
+      const response = await apiRequest("/api/admin/grades", "POST", {
+        studentId: Number(studentId),
+        course,
+        grade,
+      });
 
-    alert("Grade added successfully!");
+      const student = allStudents.find(
+        (s) => String(s.id) === String(studentId)
+      );
+      const courseObj = allCourses.find((c) => c.name === course);
 
-    // Enrich new grade so it matches existing rows (has studentName + year)
-    const student = allStudents.find((s) => String(s.id) === String(studentId));
-    const courseObj = allCourses.find((c) => c.name === course);
+      const enrichedGrade = {
+        ...response.grade,
+        studentName: student ? student.name : "(unknown)",
+        course,
+        year: courseObj ? courseObj.year : undefined,
+      };
 
-    const enrichedGrade = {
-      ...response.grade,
-      studentName: student ? student.name : "(unknown)",
-      course,
-      year: courseObj ? courseObj.year : undefined,
-    };
+      allGrades.unshift(enrichedGrade);
+      renderGradesTable(allGrades);
+      resetForm();
+      alert("Grade added.");
+    } else {
+      // UPDATE (only grade is updated on backend)
+      await apiRequest(`/api/admin/grades/${currentEditingGradeId}`, "PUT", {
+        grade,
+      });
 
-    allGrades.push(enrichedGrade);
-    renderGradesTable(allGrades);
+      allGrades = allGrades.map((g) =>
+        String(g.id) === String(currentEditingGradeId) ? { ...g, grade } : g
+      );
+
+      renderGradesTable(allGrades);
+      resetForm();
+      alert("Grade updated.");
+    }
   } catch (err) {
     console.error(err);
-    alert("Could not add grade.");
+    alert("Could not save grade.");
   }
 });
 
-// Year Filter Buttons 
+// YEAR FILTER BUTTONS
+
 document.querySelectorAll(".year-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
     const year = Number(btn.dataset.year);
@@ -149,14 +168,17 @@ document.getElementById("allBtn").addEventListener("click", () => {
   renderGradesTable(allGrades);
 });
 
-// Summary Helpers 
+// SUMMARY HELPERS
+
 function computeSummary(list) {
   const summary = { A: 0, B: 0, C: 0, D: 0, E: 0, F: 0 };
+
   list.forEach((g) => {
     if (summary[g.grade] !== undefined) {
       summary[g.grade] += 1;
     }
   });
+
   return { total: list.length, summary };
 }
 
@@ -173,13 +195,14 @@ function updateSummary(list) {
   el.textContent = `Total: ${total} · A:${summary.A} B:${summary.B} C:${summary.C} D:${summary.D} E:${summary.E} F:${summary.F}`;
 }
 
-// Render Table 
+// RENDER TABLE (WITH EDIT / DELETE)
+
 function renderGradesTable(list) {
   const tbody = document.querySelector("#gradesLogTable tbody");
   tbody.innerHTML = "";
 
   if (!list.length) {
-    tbody.innerHTML = `<tr><td colspan="4">No grades found.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5">No grades found.</td></tr>`;
     updateSummary(list);
     return;
   }
@@ -187,20 +210,92 @@ function renderGradesTable(list) {
   list.forEach((g) => {
     const row = document.createElement("tr");
 
-    // Highlight failing grades
-    if (g.grade === "F") {
-      row.classList.add("grade-fail");
-    }
+    if (g.grade === "F") row.classList.add("grade-fail");
 
     row.innerHTML = `
       <td>${g.studentName}</td>
       <td>${g.course}</td>
       <td>${g.grade}</td>
       <td>${g.date || "-"}</td>
+      <td>
+        <button class="btn edit-btn" data-id="${g.id}">Edit</button>
+        <button class="btn-dark delete-btn" data-id="${g.id}">Delete</button>
+      </td>
     `;
+
+    const editBtn = row.querySelector(".edit-btn");
+    const deleteBtn = row.querySelector(".delete-btn");
+
+    if (editBtn) {
+      editBtn.addEventListener("click", () => startEditGrade(g));
+    }
+
+    if (deleteBtn) {
+      deleteBtn.addEventListener("click", () => deleteGrade(g.id));
+    }
 
     tbody.appendChild(row);
   });
 
   updateSummary(list);
+}
+
+// EDIT GRADE (FILL FORM, CHANGE BUTTON LABEL)
+
+function startEditGrade(grade) {
+  currentEditingGradeId = grade.id;
+
+  // Try to select correct student & course in dropdowns, based on names
+  const student = allStudents.find((s) => s.name === grade.studentName);
+  const course = allCourses.find((c) => c.name === grade.course);
+
+  if (student) {
+    studentSelect.value = String(student.id);
+  }
+
+  if (course) {
+    courseSelect.value = course.name;
+  }
+
+  gradeSelect.value = grade.grade;
+
+  addGradeBtn.textContent = "Save changes";
+}
+
+// DELETE GRADE
+
+async function deleteGrade(id) {
+  if (!confirm("Are you sure you want to delete this grade?")) return;
+
+  try {
+    await apiRequest(`/api/admin/grades/${id}`, "DELETE");
+
+    allGrades = allGrades.filter((g) => String(g.id) !== String(id));
+    renderGradesTable(allGrades);
+
+    if (String(currentEditingGradeId) === String(id)) {
+      resetForm();
+    }
+
+    alert("Grade deleted.");
+  } catch (err) {
+    console.error(err);
+    alert("Could not delete grade.");
+  }
+}
+
+// HELPERS
+
+function resetForm() {
+  currentEditingGradeId = null;
+
+  if (allStudents.length) {
+    studentSelect.value = String(allStudents[0].id);
+  }
+  if (allCourses.length) {
+    courseSelect.value = allCourses[0].name;
+  }
+  gradeSelect.value = "A";
+
+  addGradeBtn.textContent = "Add Grade";
 }
