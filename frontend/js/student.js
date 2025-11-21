@@ -3,6 +3,21 @@ import { logout } from "./auth.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   let allCourses = [];
+  // Helper: get a "base" name for grouping (e.g. "Engelska 5" -> "Engelska")
+  function getBaseCourseName(name) {
+    if (!name) return "";
+
+    // Split into words
+    const parts = name.trim().split(/\s+/);
+
+    // If last part contains a digit (like "5" or "1b"), drop it
+    const last = parts[parts.length - 1];
+    if (/\d/.test(last)) {
+      parts.pop();
+    }
+
+    return parts.join(" ");
+  }
 
   // Load Student Name
   try {
@@ -37,14 +52,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Clear old options except "All"
     dropdown.innerHTML = `<option value="">All</option>`;
 
-    // Get unique courses
-    const uniqueNames = [...new Set(courses.map((c) => c.name))];
+    // Extract base names (remove digits)
+    const baseNames = [
+      ...new Set(courses.map((c) => c.name.replace(/\d+/g, "").trim())),
+    ];
 
-    // Add each course
-    uniqueNames.forEach((name) => {
+    baseNames.forEach((base) => {
       const opt = document.createElement("option");
-      opt.value = name;
-      opt.textContent = name;
+      opt.value = base;
+      opt.textContent = base;
       dropdown.appendChild(opt);
     });
   }
@@ -100,7 +116,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Match base name ignoring year number
-    // Example: "Engleska" matches "Engleska 1", "Engleska 2", "Engleska 3"
+    // Example: "Engelska" matches "Engelska 1", "Engelska 2", "Engelska 3"
     const filtered = allCourses.filter((c) => {
       const baseName = c.name.replace(/\d+/g, "").trim(); // remove numbers
       return baseName === selected;
