@@ -26,6 +26,13 @@ const courseSelect = document.getElementById("courseSelect");
 const gradeSelect = document.getElementById("gradeSelect");
 const addGradeBtn = document.getElementById("addGradeBtn");
 
+// Convert backend UTC date → Local browser time
+function toLocalTime(isoDateString) {
+  if (!isoDateString) return "-";
+  const d = new Date(isoDateString);
+  return d.toLocaleString(); // ← LOCAL TIME
+}
+
 // INITIAL LOAD
 async function init() {
   try {
@@ -39,7 +46,12 @@ async function init() {
 
     // Grades log
     const gradesRes = await apiRequest("/api/admin/grades");
-    allGrades = gradesRes.grades;
+
+    // Apply local time conversion
+    allGrades = gradesRes.grades.map((g) => ({
+      ...g,
+      date: toLocalTime(g.date),
+    }));
 
     fillStudentSelect();
     fillCourseSelect();
@@ -77,7 +89,6 @@ function fillCourseSelect() {
 }
 
 // COURSE FILTER (HEADER)
-
 function fillCourseFilterDropdown() {
   const filter = document.getElementById("courseFilter");
   filter.innerHTML = `<option value="">All</option>`;
@@ -99,7 +110,6 @@ function fillCourseFilterDropdown() {
 }
 
 // ADD / UPDATE GRADE (ONE BUTTON, TWO MODES)
-
 addGradeBtn.addEventListener("click", async () => {
   const studentId = studentSelect.value;
   const course = courseSelect.value;
@@ -124,13 +134,14 @@ addGradeBtn.addEventListener("click", async () => {
       const student = allStudents.find(
         (s) => String(s.id) === String(studentId)
       );
-      const courseObj = allCourses.find((c) => c.name === course);
+      const courseObj = allCourses.find((c) => c.id === courseId);
 
       const enrichedGrade = {
         ...response.grade,
         studentName: student ? student.name : "(unknown)",
-        course,
-        year: courseObj ? courseObj.year : undefined,
+        course: courseObj?.name,
+        year: courseObj?.year,
+        date: toLocalTime(response.grade.date), // ← FIX
       };
 
       allGrades.unshift(enrichedGrade);
@@ -158,7 +169,6 @@ addGradeBtn.addEventListener("click", async () => {
 });
 
 // YEAR FILTER BUTTONS
-
 document.querySelectorAll(".year-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
     const year = Number(btn.dataset.year);
@@ -172,7 +182,6 @@ document.getElementById("allBtn").addEventListener("click", () => {
 });
 
 // SUMMARY HELPERS
-
 function computeSummary(list) {
   const summary = { A: 0, B: 0, C: 0, D: 0, E: 0, F: 0 };
 
@@ -198,8 +207,7 @@ function updateSummary(list) {
   el.textContent = `Total: ${total} · A:${summary.A} B:${summary.B} C:${summary.C} D:${summary.D} E:${summary.E} F:${summary.F}`;
 }
 
-// RENDER TABLE (WITH EDIT / DELETE)
-
+// RENDER TABLE
 function renderGradesTable(list) {
   const tbody = document.querySelector("#gradesLogTable tbody");
   tbody.innerHTML = "";
@@ -243,12 +251,10 @@ function renderGradesTable(list) {
   updateSummary(list);
 }
 
-// EDIT GRADE (FILL FORM, CHANGE BUTTON LABEL)
-
+// EDIT GRADE (FILL FORM)
 function startEditGrade(grade) {
   currentEditingGradeId = grade.id;
 
-  // Try to select correct student & course in dropdowns, based on names
   const student = allStudents.find((s) => s.name === grade.studentName);
   const course = allCourses.find((c) => c.name === grade.course);
 
@@ -257,7 +263,7 @@ function startEditGrade(grade) {
   }
 
   if (course) {
-    courseSelect.value = course.name;
+    courseSelect.value = course.id;
   }
 
   gradeSelect.value = grade.grade;
@@ -266,7 +272,6 @@ function startEditGrade(grade) {
 }
 
 // DELETE GRADE
-
 async function deleteGrade(id) {
   if (!confirm("Are you sure you want to delete this grade?")) return;
 
@@ -287,17 +292,12 @@ async function deleteGrade(id) {
   }
 }
 
-// HELPERS
-
+// RESET FORM (BACK TO ADD MODE)
 function resetForm() {
   currentEditingGradeId = null;
 
-  if (allStudents.length) {
-    studentSelect.value = String(allStudents[0].id);
-  }
-  if (allCourses.length) {
-    courseSelect.value = allCourses[0].name;
-  }
+  if (allStudents.length) studentSelect.value = String(allStudents[0].id);
+  if (allCourses.length) courseSelect.value = allCourses[0].id;
   gradeSelect.value = "A";
 
   addGradeBtn.textContent = "Add Grade";

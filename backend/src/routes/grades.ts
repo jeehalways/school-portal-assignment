@@ -56,9 +56,9 @@ router.post("/", authenticate, requireAdmin, (req, res) => {
   if (!studentRow) return res.status(404).json({ error: "Student not found" });
 
   const stmt = db.prepare(`
-      INSERT INTO grades (student_id, course_id, grade, created_at)
-      VALUES (?, ?, ?, datetime('now'))
-  `);
+  INSERT INTO grades (student_id, course_id, grade, created_at)
+  VALUES (?, ?, ?, datetime('now', 'localtime'))
+`);
 
   const info = stmt.run(studentId, courseId, grade);
 
