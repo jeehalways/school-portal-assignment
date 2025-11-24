@@ -7,4 +7,7 @@ const dbPath = path.join(__dirname, "..", "..", "database.sqlite");
 
 const db = new Database(dbPath);
 
+// Enable foreign keys
+db.pragma("foreign_keys = ON");
+
 export default db;
