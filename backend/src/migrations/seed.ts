@@ -3,10 +3,60 @@ import db from "../config/db";
 console.log("🌱 Seeding database...");
 
 try {
-  // Admin user
+  // WIPE EXISTING DATA SO WE NEVER GET DUPLICATES
+  db.exec(`
+    DELETE FROM grades;
+    DELETE FROM courses;
+    DELETE FROM users;
+
+    -- Reset autoincrement counters
+    DELETE FROM sqlite_sequence WHERE name IN ('grades', 'courses', 'users');
+  `);
+
+  // SEED COURSES (same list as in 001_create_tables.sql)
+  const courses = [
+    // Year 1
+    { name: "Engelska 5", year: 1 },
+    { name: "Filosofi 1", year: 1 },
+    { name: "Historia 1b", year: 1 },
+    { name: "Idrott och Hälsa 1", year: 1 },
+    { name: "Matematik 1b", year: 1 },
+    { name: "Naturkunskap 1b", year: 1 },
+    { name: "Samhällskunskap 1b", year: 1 },
+    { name: "Svenska 1", year: 1 },
+
+    // Year 2
+    { name: "Engelska 6", year: 2 },
+    { name: "Ledarskap och organisation", year: 2 },
+    { name: "Internationella Relationer", year: 2 },
+    { name: "Matematik 2b", year: 2 },
+    { name: "Samhällskunskap 2", year: 2 },
+    { name: "Svenska 2", year: 2 },
+
+    // Year 3
+    { name: "Filosofi 2", year: 3 },
+    { name: "Gymnasiearbete SA", year: 3 },
+    { name: "Kommunikation", year: 3 },
+    { name: "Psykologi 1", year: 3 },
+    { name: "Psykologi 2a", year: 3 },
+    { name: "Religionskunskap 1", year: 3 },
+    { name: "Religionskunskap 2", year: 3 },
+    { name: "Sociologi", year: 3 },
+    { name: "Svenska 3", year: 3 },
+  ];
+
+  const insertCourse = db.prepare(
+    `INSERT INTO courses (name, year) VALUES (@name, @year)`
+  );
+
+  for (const c of courses) {
+    insertCourse.run(c);
+  }
+
+  // ADMIN USER
   db.prepare(
     `
-    INSERT OR IGNORE INTO users (firebase_uid, email, name, role, year, phone, address)
+    INSERT INTO users (firebase_uid, email, name, role, year, phone, address)
     VALUES (@uid, @email, @name, 'admin', NULL, @phone, @address)
   `
   ).run({
@@ -17,7 +67,7 @@ try {
     address: null,
   });
 
-  // Test students
+  // TEST STUDENTS
   const students = [
     {
       uid: "zX9gqzUvAqPQBtml4MgiDM0tNjH3",
@@ -101,13 +151,15 @@ try {
     },
   ];
 
-  const insert = db.prepare(`
-    INSERT OR IGNORE INTO users (firebase_uid, email, name, role, year, phone, address)
+  const insertStudent = db.prepare(
+    `
+    INSERT INTO users (firebase_uid, email, name, role, year, phone, address)
     VALUES (@uid, @email, @name, 'student', @year, @phone, @address)
-  `);
+  `
+  );
 
   for (const s of students) {
-    insert.run({
+    insertStudent.run({
       uid: s.uid,
       email: s.email,
       name: s.name,
