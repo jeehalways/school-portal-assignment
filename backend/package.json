@@ -9,7 +9,7 @@
     "seed": "ts-node src/migrations/seed.ts",
     "start": "node dist/server.js",
     "lint": "eslint . --ext .ts",
-    "test": "jest"
+    "test": "jest --runInBand"
   },
   "keywords": [],
   "author": "",
