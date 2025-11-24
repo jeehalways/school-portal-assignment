@@ -3,7 +3,12 @@
 import Database from "better-sqlite3";
 import path from "path";
 
-const dbPath = path.join(__dirname, "..", "..", "database.sqlite");
+const isTest = process.env.NODE_ENV === "test";
+
+// Use separate DB for Jest
+const dbPath = isTest
+  ? path.join(__dirname, "..", "..", "test.sqlite")
+  : path.join(__dirname, "..", "..", "database.sqlite");
 
 const db = new Database(dbPath);
 

@@ -1,4 +1,5 @@
-/** @type {import('jest').Config} */
+process.env.NODE_ENV = "test";
+
 module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
@@ -8,4 +9,5 @@ module.exports = {
     "^.+\\.ts$": ["ts-jest", {}],
   },
   verbose: true,
+  setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
 };
