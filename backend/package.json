@@ -21,6 +21,7 @@
     "express": "^5.1.0",
     "firebase-admin": "^13.6.0",
     "better-sqlite3": "12.4.6",
+    "zod": "4.1.13",
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
