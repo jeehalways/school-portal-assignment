@@ -1,8 +1,6 @@
-// Express instance
-// Creates the Express application
-// Here we add: Middlewake (Json, Cors); Firebase auth middleware; Routes: students, grades, courses; Error handling.
 import express from "express";
 import cors from "cors";
+import SwaggerRouter from "./swaggerRouter";
 
 import healthRouter from "./routes/health";
 import studentRouter from "./routes/students";
@@ -18,7 +16,7 @@ app.use(express.json());
 // Basic route
 app.use("/api/health", healthRouter);
 app.use("/api/students", studentRouter);
-
+app.use("/api/docs", SwaggerRouter);
 // Admin routes
 app.use("/api/admin/students", adminStudentRouter);
 app.use("/api/admin/courses", adminCoursesRouter);

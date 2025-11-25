@@ -1,0 +1,167 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "School Portal API",
+    "version": "1.0.0",
+    "description": "API documentation for the School Portal Assignment"
+  },
+  "servers": [{ "url": "http://localhost:3000" }],
+
+  "paths": {
+    "/api/health": {
+      "get": {
+        "summary": "Health check",
+        "tags": ["Health"],
+        "responses": {
+          "200": {
+            "description": "Server running",
+            "content": {
+              "application/json": {
+                "example": { "ok": true }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/students/me": {
+      "get": {
+        "summary": "Get logged-in student profile",
+        "tags": ["Students"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Student data",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": 1,
+                  "name": "Anna Bergström",
+                  "email": "anna@example.com",
+                  "role": "student",
+                  "year": 1
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/students/me/courses": {
+      "get": {
+        "summary": "Get logged-in student's courses",
+        "tags": ["Students"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "List of courses with grades"
+          }
+        }
+      }
+    },
+
+    "/api/admin/students": {
+      "get": {
+        "summary": "Get all students",
+        "tags": ["Admin - Students"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "List of all student accounts" }
+        }
+      },
+      "post": {
+        "summary": "Create student",
+        "tags": ["Admin - Students"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "201": { "description": "Student created" } }
+      }
+    },
+
+    "/api/admin/students/{id}": {
+      "get": {
+        "summary": "Get student by ID",
+        "tags": ["Admin - Students"],
+        "security": [{ "bearerAuth": [] }]
+      },
+      "put": {
+        "summary": "Update student",
+        "tags": ["Admin - Students"],
+        "security": [{ "bearerAuth": [] }]
+      },
+      "delete": {
+        "summary": "Delete student",
+        "tags": ["Admin - Students"],
+        "security": [{ "bearerAuth": [] }]
+      }
+    },
+
+    "/api/admin/courses": {
+      "get": {
+        "summary": "Get all courses",
+        "tags": ["Admin - Courses"],
+        "security": [{ "bearerAuth": [] }]
+      },
+      "post": {
+        "summary": "Create course",
+        "tags": ["Admin - Courses"],
+        "security": [{ "bearerAuth": [] }]
+      }
+    },
+
+    "/api/admin/courses/{id}": {
+      "get": {
+        "summary": "Get course by ID",
+        "tags": ["Admin - Courses"],
+        "security": [{ "bearerAuth": [] }]
+      },
+      "put": {
+        "summary": "Update course",
+        "tags": ["Admin - Courses"],
+        "security": [{ "bearerAuth": [] }]
+      },
+      "delete": {
+        "summary": "Delete course",
+        "tags": ["Admin - Courses"],
+        "security": [{ "bearerAuth": [] }]
+      }
+    },
+
+    "/api/admin/grades": {
+      "get": {
+        "summary": "Get all grades log",
+        "tags": ["Admin - Grades"],
+        "security": [{ "bearerAuth": [] }]
+      },
+      "post": {
+        "summary": "Create grade",
+        "tags": ["Admin - Grades"],
+        "security": [{ "bearerAuth": [] }]
+      }
+    },
+
+    "/api/admin/grades/{id}": {
+      "put": {
+        "summary": "Update grade",
+        "tags": ["Admin - Grades"],
+        "security": [{ "bearerAuth": [] }]
+      },
+      "delete": {
+        "summary": "Delete grade",
+        "tags": ["Admin - Grades"],
+        "security": [{ "bearerAuth": [] }]
+      }
+    }
+  },
+
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

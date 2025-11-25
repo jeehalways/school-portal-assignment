@@ -9,4 +9,5 @@ const router = Router();
 
 router.get("/me", authenticate, getMe);
 router.get("/me/courses", authenticate, getMyCourses);
+
 export default router;
