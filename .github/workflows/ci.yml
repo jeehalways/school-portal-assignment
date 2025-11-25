@@ -12,7 +12,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    
+    # Force backend tp use test DB
     env:
       NODE_ENV: test
 
@@ -22,6 +23,7 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
         
     steps:
+      - name: Checkout repository
       - uses: actions/checkout@v4
 
       - name: Install SQLite
@@ -32,11 +34,20 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+          
+        # Install backend dependencies (inside the backend folder)
+      - name: Install backend dependencies
+        run: cd backend && npm ci
+        
+        # Run migrations on test DB
+      - name: Run migrations
+        run: cd backend && npm run migrate
+        
+        # Run seed script to populate test DB
+      - name: Seed test database
+        run: cd backend && npm run seed
 
-      - run: npm ci
-
-      # Run migrations & seeds on the test DB
-      - run: npm run migrate
-      - run: npm run seed
-
-      - run: npm test
+      # Run backend tests
+      - name: Run tests
+        run: cd backend && npm test
